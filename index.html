@@ -7,26 +7,23 @@
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
     <link rel="icon" type="image/png" href="icona.png">
-    
-    <link rel="apple-touch-icon" href="icona.png">
-    
-    <link rel="manifest" href="manifest.json">
     
     <style>
         :root {
             --bright-yellow: #FFD54F;
-            --light-blue: #B3E5FC;
-            --accent-green: #4CAF50;
-            --dark-grey: #333333;
-            --sidebar-width: 220px;
+            --light-blue: #81D4FA;
+            --accent-green: #81C784;
+            --dark-grey: #424242;
+            --card-bg: #FFFFFF;
+            --sidebar-width: 200px;
         }
 
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: var(--bright-yellow);
             color: var(--dark-grey);
             display: flex;
             height: 100vh;
@@ -34,18 +31,17 @@
             position: relative;
         }
 
-        /* SFONDO CON IMMAGINE DELLO CHEF PAZZO (Senza bokeh, scala 1:1, grandi chef) */
-        /* Per rendere gli chef piccoli e leggibili, ridimensioniamo il pattern */
+        /* SFONDO CON IMMAGINE DELLO CHEF PAZZO (Sfondo trasparente image_11.png) */
+        /* rimosso l'effetto sfuocato/bokeh per una trama nitida */
         body::before {
             content: '';
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image: url('sfondo_mobile.png'); /* <--- USA QUESTO FILE ORIGINALE */
-            background-repeat: repeat;
-            /*background-size: cover; <--- Questo ha causato l'effetto zoom enorme */
-            background-size: 250px auto; /* <--- Ho ridimensionato il pattern: gli chef ora sono piccoli e abbondanti */
             opacity: 0.15; /* Sottile */
+            background-image: url('sfondo_mobile.png'); /* <--- CARICA QUESTO FILE */
+            background-repeat: repeat;
+            background-size: 150px auto;
             pointer-events: none;
             z-index: 1; /* Sotto tutto */
         }
@@ -53,140 +49,97 @@
         /* --- TEMA REMOVED --- */
         /* rimosse le regole del tema pazzo */
 
-        /* MENU LATERALE COME DA IMMAGINE */
-        #sidebar { 
-            width: var(--sidebar-width); 
-            background-color: var(--light-blue); 
-            border-right: 6px solid #E53935; /* Riga rossa a destra */
-            padding-top: 20px; 
-            transition: transform 0.3s ease; 
-            position: absolute; 
-            height: 100%; 
-            z-index: 100; 
-            left: -230px; 
-            box-shadow: 5px 0 15px rgba(0,0,0,0.5); 
-        }
+        #sidebar { width: var(--sidebar-width); background-color: var(--light-blue); padding-top: 20px; transition: transform 0.3s ease; position: absolute; height: 100%; z-index: 100; left: -200px; box-shadow: 2px 0 5px rgba(0,0,0,0.2); }
         #sidebar.open { left: 0; }
-        
-        .menu-item { 
-            display: flex; 
-            flex-direction: column; /* Icona sopra, testo sotto */
-            align-items: center; 
-            padding: 20px 10px; 
-            color: var(--dark-grey); 
-            text-decoration: none; 
-            cursor: pointer; 
-            font-weight: bold;
-            font-size: 1.2em;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            transition: background 0.2s; 
-        }
-        .menu-item:hover { background-color: rgba(255, 255, 255, 0.4); }
-        .icon-pua { margin-bottom: 8px; font-size: 1.6em; }
+        .menu-item { display: flex; align-items: center; padding: 15px 20px; color: white; text-decoration: none; cursor: pointer; transition: background 0.2s; }
+        .menu-item:hover { background-color: rgba(255, 255, 255, 0.2); }
+        .icon-pua { margin-right: 15px; font-weight: bold; font-size: 1.2em; }
 
         #main-content { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; width: 100%; position: relative; z-index: 5; }
-        
-        /* INTESTAZIONE */
-        #header { display: flex; align-items: center; margin-bottom: 20px; background: rgba(255,255,255,0.7); padding: 10px 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(10px); }
-        #menu-toggle { font-size: 2em; cursor: pointer; margin-right: 15px; background: none; border: none; color: #E64A19; }
-        #app-title { font-size: 1.8em; margin: 0; color: #333; font-weight: bold; }
-        #app-title span { color: #E64A19; } /* Punto arancione */
+        #header { display: flex; align-items: center; margin-bottom: 20px; }
+        #menu-toggle { font-size: 2em; cursor: pointer; margin-right: 20px; background: none; border: none; color: var(--dark-grey); }
+        #app-title { font-size: 1.5em; margin: 0; color: #E64A19; transition: all 0.3s ease; }
 
         .view { display: none; }
         .view.active { display: block; }
 
-        #view-aggiungi-content, #view-convertitore-content { display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 10px; }
+        #view-aggiungi-content, #view-convertitore-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
         
-        /* FINESTRA IN PRIMO PIANO (Spicca di più) */
-        .form-chef, .calc-chef { 
-            width: 90%; 
-            max-width: 400px; 
-            margin: auto; 
-            background: rgba(255, 255, 255, 0.95); /* Bianco quasi solido */
-            padding: 30px 20px; 
-            border-radius: 20px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4); /* Ombra molto forte */
-            border: 3px solid var(--accent-green); /* Bordo verde */
-            position: relative;
-        }
+        /* FINESTRA IN PRIMO PIANO rimpicciolita del 30% */
+        .form-chef, .calc-chef { max-width: 280px; margin: auto; background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 4px dashed #81D4FA; }
         
-        input { width: 85%; padding: 15px; margin: 10px 0; border: 2px solid #ccc; border-radius: 10px; font-family: inherit; font-size: 1em; }
-        input:focus { border-color: var(--accent-green); outline: none; }
-        .preferito-check { margin: 15px 0; font-size: 1.1em; cursor: pointer; display: block; font-weight: bold; }
-        
-        button.btn-azione { background-color: var(--accent-green); color: white; border: none; padding: 15px 40px; border-radius: 15px; font-size: 1.2em; font-weight: bold; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4); }
+        input { width: 80%; padding: 12px; margin: 10px 0; border: 2px solid var(--accent-green); border-radius: 10px; font-family: inherit; }
+        .preferito-check { margin: 15px 0; font-size: 1.2em; cursor: pointer; display: block; }
+        button.btn-azione { background-color: var(--accent-green); color: white; border: none; padding: 15px 30px; border-radius: 15px; font-size: 1.2em; cursor: pointer; margin-top: 10px; transition: transform 0.1s; }
         button.btn-azione:active { transform: scale(0.95); }
 
         .lista-ul { list-style: none; padding: 0; }
-        .pietanza-item { background-color: rgba(255, 255, 255, 0.95); margin: 12px 0; padding: 20px; border-radius: 15px; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.15); display: flex; justify-content: space-between; align-items: center; color: var(--dark-grey); border-left: 5px solid var(--accent-green); }
+        .pietanza-item { background-color: var(--card-bg); margin: 10px 0; padding: 20px; border-radius: 15px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; color: var(--dark-grey); }
         .pietanza-item:hover { background-color: rgba(129, 212, 250, 0.1); }
         .pietanza-nome { font-size: 1.2em; font-weight: bold; }
-        .dettaglio-pop { font-size: 1em; background: #f0f0f0; padding: 5px 10px; border-radius: 8px; }
-        .stella-icona { color: #FFD54F; font-size: 1.3em; margin-left: 8px; }
+        .dettaglio-pop { font-size: 0.9em; opacity: 0.8; }
+        .stella-icona { color: #FFD54F; font-size: 1.2em; margin-left: 10px; }
 
         /* --- CONVERTITORE --- */
-        #risultato-conv { margin-top: 20px; font-weight: bold; font-size: 1.2em; color: #E64A19; background: #FFE0B2; padding: 15px; border-radius: 10px; display: none; }
+        #risultato-conv { margin-top: 20px; font-weight: bold; font-size: 1.2em; color: #E64A19; background: #fff3e0; padding: 15px; border-radius: 10px; display: none; }
     </style>
 </head>
 <body>
 
     <div id="sidebar">
         <div class="menu-item" onclick="showView('aggiungi')">
-            <span class="icon-pua">⊕</span>
-            Aggiungi
+            <span class="icon-pua">+</span> Aggiungi
         </div>
         <div class="menu-item" onclick="showView('lista')">
-            <span class="icon-pua">📄</span>
-            Lista Totale
+            <span class="icon-pua">≡</span> Lista Totale
         </div>
         <div class="menu-item" onclick="showView('preferiti')">
-            <span class="icon-pua">⭐</span>
-            Preferiti
+            <span class="icon-pua">⭐</span> Preferiti
         </div>
         <div class="menu-item" onclick="showView('convertitore')">
-            <span class="icon-pua">🔄</span>
-            Convertitore
+            <span class="icon-pua">↔</span> Convertitore
         </div>
         </div>
 
     <div id="main-content">
         <div id="header">
             <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
-            <h1 id="app-title">AirChef<span>.</span></h1>
+            <h1 id="app-title">AirChef.</h1>
         </div>
 
         <div id="view-aggiungi" class="view active">
             <div id="view-aggiungi-content">
                 <div class="form-chef">
-                    <h2 style="margin-top:0; color: #E64A19;">Aggiungi Piatto</h2>
-                    <input type="text" id="pietanza-nome-input" placeholder="Nome Pietanza">
+                    <p>Ciao Chef! Aggiungi un piatto!</p>
+                    <input type="text" id="pietanza-nome-input" placeholder="Nome Pietanza (es. Patatine)">
                     <input type="number" id="pietanza-tempo-input" placeholder="Tempo (min)">
                     <input type="number" id="pietanza-gradi-input" placeholder="Gradi (°C)">
                     <label class="preferito-check">
-                        <input type="checkbox" id="pietanza-fav-input" style="width: auto;"> ⭐ Piatto Preferito
+                        <input type="checkbox" id="pietanza-fav-input"> ⭐ Segna come Preferito!
                     </label>
-                    <button class="btn-azione" onclick="savePietanza()">Aggiungi 👍</button>
+                    <button class="btn-azione" onclick="savePietanza()">Salva</button>
                 </div>
             </div>
         </div>
 
         <div id="view-lista" class="view">
-            <h2 style="text-align: center;">Tutte le ricette</h2>
+            <p>Tutte le tue ricette:</p>
             <ul id="lista-pietanze" class="lista-ul"></ul>
         </div>
 
         <div id="view-preferiti" class="view">
-            <h2 style="text-align: center;">I tuoi piatti preferiti ⭐</h2>
+            <p>I tuoi piatti del cuore ⭐:</p>
             <ul id="lista-preferiti" class="lista-ul"></ul>
         </div>
 
         <div id="view-convertitore" class="view">
             <div id="view-convertitore-content">
                 <div class="calc-chef">
-                    <h2 style="margin-top:0; color: #E64A19;">Convertitore</h2>
+                    <p>↔ Nano Banana Convertitore ↔</p>
+                    <p style="font-size: 0.9em; opacity: 0.7;">(Passa da Forno Normale a Friggitrice)</p>
                     <input type="number" id="forno-gradi-input" placeholder="Gradi Forno (°C)">
                     <input type="number" id="forno-tempo-input" placeholder="Tempo Forno (min)">
-                    <button class="btn-azione" style="background-color: #29B6F6;" onclick="convertiForno()">Calcola!</button>
+                    <button class="btn-azione" onclick="convertiForno()">Calcola!</button>
                     <div id="risultato-conv"></div>
                 </div>
             </div>
@@ -203,11 +156,14 @@
         function showView(viewId) {
             views.forEach(view => view.classList.remove('active'));
             document.getElementById('view-' + viewId).classList.add('active');
+            
             if(viewId === 'lista') loadList(false);
             if(viewId === 'preferiti') loadList(true);
+            
             sidebar.classList.remove('open');
         }
 
+        // --- GESTIONE DATI ---
         function getRecipes() { const data = localStorage.getItem(STORAGE_KEY); return data ? JSON.parse(data) : []; }
 
         function savePietanza() {
@@ -235,35 +191,35 @@
             const ul = soloPreferiti ? document.getElementById('lista-preferiti') : document.getElementById('lista-pietanze');
             ul.innerHTML = ''; 
             const ricetteDaMostrare = soloPreferiti ? recipes.filter(r => r.fav) : recipes;
-            
-            if(ricetteDaMostrare.length === 0) { 
-                ul.innerHTML = '<li class="pietanza-item" style="justify-content:center;">Nessuna ricetta!</li>'; 
-                return; 
-            }
-            
+            if(ricetteDaMostrare.length === 0) { ul.innerHTML = '<li class="pietanza-item">Nessuna ricetta qui!</li>'; return; }
             ricetteDaMostrare.forEach(recipe => {
                 const li = document.createElement('li');
                 li.className = 'pietanza-item';
                 const stella = recipe.fav ? '<span class="stella-icona">⭐</span>' : '';
-                li.innerHTML = `<div style="display:flex; align-items:center;"><span class="pietanza-nome">${recipe.nome}</span>${stella}</div><span class="dettaglio-pop">${recipe.gradi}°C | ${recipe.tempo}'</span>`;
+                li.innerHTML = `<div><span class="pietanza-nome">${recipe.nome}</span>${stella}</div><span class="dettaglio-pop">${recipe.gradi}°C | ${recipe.tempo} min</span>`;
                 ul.appendChild(li);
             });
         }
 
+        // --- TEMA REMOVED ---
+        // rimosse le regole del tema pazzo
+
+        // --- LOGICA CONVERTITORE ---
         function convertiForno() {
             const gradiF = document.getElementById('forno-gradi-input').value;
             const tempoF = document.getElementById('forno-tempo-input').value;
             const risDiv = document.getElementById('risultato-conv');
 
-            if(!gradiF || !tempoF) { alert('Inserisci gradi e tempo!'); risDiv.style.display='none'; return; }
+            if(!gradiF || !tempoF) { alert('Ehi, mancano i gradi o il tempo!'); risDiv.style.display='none'; return; }
 
+            // Logica Semplice: Riduci Gradi di 20°C, Riduci Tempo del 25-30%
             let gradiAir = parseInt(gradiF) - 20;
-            if(gradiAir < 100) gradiAir = 100;
+            if(gradiAir < 100) gradiAir = 100; // Sicurezza minima
 
-            let tempoAir = Math.round(parseInt(tempoF) * 0.75); 
-            if(tempoAir < 2) tempoAir = 2;
+            let tempoAir = Math.round(parseInt(tempoF) * 0.7); // Moltiplica per 0.70 (riduzione del 30%)
+            if(tempoAir < 2) tempoAir = 2; // Sicurezza minima
 
-            risDiv.innerHTML = `Friggitrice:<br><span style="font-size:1.4em;">${gradiAir}°C per ${tempoAir} min</span>`;
+            risDiv.innerHTML = `Prova con:<br>${gradiAir}°C per ${tempoAir} min`;
             risDiv.style.display = 'block';
         }
 
