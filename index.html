@@ -11,133 +11,213 @@
     
     <style>
         :root {
-            --bright-yellow: #FFD54F;
-            --light-blue: #81D4FA;
-            --accent-green: #81C784;
-            --dark-grey: #424242;
-            --card-bg: #FFFFFF;
-            --sidebar-width: 200px;
+            --light-blue: #B3E5FC;
+            --accent-green: #4CAF50;
+            --dark-grey: #333333;
+            --sidebar-width: 220px;
         }
 
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--bright-yellow);
             color: var(--dark-grey);
             display: flex;
             height: 100vh;
             overflow: hidden;
-            position: relative;
-        }
-
-        /* SFONDO CON IMMAGINE DELLO CHEF PAZZO (Sfondo trasparente image_11.png) */
-        /* rimosso l'effetto sfuocato/bokeh per una trama nitida */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0.15; /* Sottile */
-            background-image: url('sfondo_mobile.png'); /* <--- CARICA QUESTO FILE */
+            /* SFONDO APPLICATO ALLA GRANDEZZA NATURALE */
+            background-image: url('sfondo_mobile.png');
             background-repeat: repeat;
-            background-size: 150px auto;
-            pointer-events: none;
-            z-index: 1; /* Sotto tutto */
+            background-position: top center;
+            background-attachment: fixed;
         }
 
-        /* --- TEMA REMOVED --- */
-        /* rimosse le regole del tema pazzo */
-
-        #sidebar { width: var(--sidebar-width); background-color: var(--light-blue); padding-top: 20px; transition: transform 0.3s ease; position: absolute; height: 100%; z-index: 100; left: -200px; box-shadow: 2px 0 5px rgba(0,0,0,0.2); }
+        /* MENU LATERALE */
+        #sidebar { 
+            width: var(--sidebar-width); 
+            background-color: var(--light-blue); 
+            border-right: 6px solid #E53935;
+            padding-top: 20px; 
+            transition: transform 0.3s ease; 
+            position: absolute; 
+            height: 100%; 
+            z-index: 100; 
+            left: -230px; 
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5); 
+        }
         #sidebar.open { left: 0; }
-        .menu-item { display: flex; align-items: center; padding: 15px 20px; color: white; text-decoration: none; cursor: pointer; transition: background 0.2s; }
-        .menu-item:hover { background-color: rgba(255, 255, 255, 0.2); }
-        .icon-pua { margin-right: 15px; font-weight: bold; font-size: 1.2em; }
+        
+        .menu-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px 10px; 
+            color: var(--dark-grey); 
+            cursor: pointer; 
+            font-weight: bold;
+            font-size: 1.2em;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: background 0.2s; 
+        }
+        .menu-item:hover { background-color: rgba(255, 255, 255, 0.4); }
+        .icon-pua { margin-bottom: 8px; font-size: 1.6em; }
 
-        #main-content { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; width: 100%; position: relative; z-index: 5; }
-        #header { display: flex; align-items: center; margin-bottom: 20px; }
-        #menu-toggle { font-size: 2em; cursor: pointer; margin-right: 20px; background: none; border: none; color: var(--dark-grey); }
-        #app-title { font-size: 1.5em; margin: 0; color: #E64A19; transition: all 0.3s ease; }
+        /* CONTENITORE PRINCIPALE */
+        #main-content { 
+            flex-grow: 1; 
+            padding: 20px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            width: 100%; 
+            position: relative; 
+            z-index: 5; 
+        }
+        
+        /* INTESTAZIONE */
+        #header { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            background: #FFFFFF; /* Sfondo bianco solido */
+            padding: 10px 15px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+        }
+        #menu-toggle { font-size: 2em; cursor: pointer; margin-right: 15px; background: none; border: none; color: #E64A19; }
+        #app-title { font-size: 1.8em; margin: 0; color: #333; font-weight: bold; }
+        #app-title span { color: #E64A19; }
 
+        /* GESTIONE VISTE */
         .view { display: none; }
         .view.active { display: block; }
 
-        #view-aggiungi-content, #view-convertitore-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .form-chef, .calc-chef { max-width: 400px; margin: auto; background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 4px dashed #81D4FA; }
+        #view-aggiungi-content, #view-convertitore-content { 
+            display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 10px; 
+        }
         
-        input { width: 80%; padding: 12px; margin: 10px 0; border: 2px solid var(--accent-green); border-radius: 10px; font-family: inherit; }
-        .preferito-check { margin: 15px 0; font-size: 1.2em; cursor: pointer; display: block; }
-        button.btn-azione { background-color: var(--accent-green); color: white; border: none; padding: 15px 30px; border-radius: 15px; font-size: 1.2em; cursor: pointer; margin-top: 10px; transition: transform 0.1s; }
+        /* FINESTRE IN PRIMO PIANO (Spiccano sullo sfondo) */
+        .form-chef, .calc-chef { 
+            width: 90%; 
+            max-width: 400px; 
+            margin: auto; 
+            background: #FFFFFF; /* Bianco solido 100% */
+            padding: 30px 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4); /* Ombra molto marcata */
+            border: 3px solid var(--accent-green); 
+        }
+        
+        input { 
+            width: 85%; padding: 15px; margin: 10px 0; border: 2px solid #ccc; 
+            border-radius: 10px; font-family: inherit; font-size: 1em; 
+        }
+        input:focus { border-color: var(--accent-green); outline: none; }
+        .preferito-check { margin: 15px 0; font-size: 1.1em; cursor: pointer; display: block; font-weight: bold; }
+        
+        button.btn-azione { 
+            background-color: var(--accent-green); color: white; border: none; 
+            padding: 15px 40px; border-radius: 15px; font-size: 1.2em; 
+            font-weight: bold; cursor: pointer; margin-top: 15px; 
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4); 
+        }
         button.btn-azione:active { transform: scale(0.95); }
 
-        .lista-ul { list-style: none; padding: 0; }
-        .pietanza-item { background-color: var(--card-bg); margin: 10px 0; padding: 20px; border-radius: 15px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; color: var(--dark-grey); }
-        .pietanza-item:hover { background-color: rgba(129, 212, 250, 0.1); }
+        /* LISTE PIETANZE */
+        .titolo-lista {
+            text-align: center;
+            background: #FFFFFF;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: inline-block;
+            margin: 0 auto 20px auto;
+        }
+        .lista-ul { list-style: none; padding: 0; display: flex; flex-direction: column; align-items: center; }
+        
+        .pietanza-item { 
+            width: 90%;
+            max-width: 400px;
+            background-color: #FFFFFF; 
+            margin: 10px 0; padding: 20px; border-radius: 15px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25); 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-left: 6px solid var(--accent-green); 
+        }
         .pietanza-nome { font-size: 1.2em; font-weight: bold; }
-        .dettaglio-pop { font-size: 0.9em; opacity: 0.8; }
-        .stella-icona { color: #FFD54F; font-size: 1.2em; margin-left: 10px; }
+        .dettaglio-pop { font-size: 1.1em; background: #f0f0f0; padding: 8px 12px; border-radius: 8px; font-weight: bold; }
+        .stella-icona { color: #FFD54F; font-size: 1.3em; margin-left: 8px; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
 
-        /* --- CONVERTITORE --- */
-        #risultato-conv { margin-top: 20px; font-weight: bold; font-size: 1.2em; color: #E64A19; background: #fff3e0; padding: 15px; border-radius: 10px; display: none; }
+        #risultato-conv { 
+            margin-top: 20px; font-weight: bold; font-size: 1.2em; 
+            color: #E64A19; background: #FFE0B2; padding: 15px; 
+            border-radius: 10px; display: none; 
+        }
     </style>
 </head>
 <body>
 
     <div id="sidebar">
         <div class="menu-item" onclick="showView('aggiungi')">
-            <span class="icon-pua">+</span> Aggiungi
+            <span class="icon-pua">⊕</span>
+            Aggiungi
         </div>
         <div class="menu-item" onclick="showView('lista')">
-            <span class="icon-pua">≡</span> Lista Totale
+            <span class="icon-pua">📄</span>
+            Lista Totale
         </div>
         <div class="menu-item" onclick="showView('preferiti')">
-            <span class="icon-pua">⭐</span> Preferiti
+            <span class="icon-pua">⭐</span>
+            Preferiti
         </div>
         <div class="menu-item" onclick="showView('convertitore')">
-            <span class="icon-pua">↔</span> Convertitore
+            <span class="icon-pua">🔄</span>
+            Convertitore
         </div>
-        </div>
+    </div>
 
     <div id="main-content">
         <div id="header">
             <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
-            <h1 id="app-title">AirChef.</h1>
+            <h1 id="app-title">AirChef<span>.</span></h1>
         </div>
 
         <div id="view-aggiungi" class="view active">
             <div id="view-aggiungi-content">
                 <div class="form-chef">
-                    <p>Ciao Chef! Aggiungi un piatto!</p>
-                    <input type="text" id="pietanza-nome-input" placeholder="Nome Pietanza (es. Patatine)">
+                    <h2 style="margin-top:0; color: #E64A19;">Aggiungi Piatto</h2>
+                    <input type="text" id="pietanza-nome-input" placeholder="Nome Pietanza">
                     <input type="number" id="pietanza-tempo-input" placeholder="Tempo (min)">
                     <input type="number" id="pietanza-gradi-input" placeholder="Gradi (°C)">
                     <label class="preferito-check">
-                        <input type="checkbox" id="pietanza-fav-input"> ⭐ Segna come Preferito!
+                        <input type="checkbox" id="pietanza-fav-input" style="width: auto;"> ⭐ Piatto Preferito
                     </label>
-                    <button class="btn-azione" onclick="savePietanza()">Salva</button>
+                    <button class="btn-azione" onclick="savePietanza()">Aggiungi 👍</button>
                 </div>
             </div>
         </div>
 
         <div id="view-lista" class="view">
-            <p>Tutte le tue ricette:</p>
+            <div style="text-align: center;">
+                <h2 class="titolo-lista">Tutte le ricette</h2>
+            </div>
             <ul id="lista-pietanze" class="lista-ul"></ul>
         </div>
 
         <div id="view-preferiti" class="view">
-            <p>I tuoi piatti del cuore ⭐:</p>
+            <div style="text-align: center;">
+                <h2 class="titolo-lista">I tuoi piatti preferiti ⭐</h2>
+            </div>
             <ul id="lista-preferiti" class="lista-ul"></ul>
         </div>
 
         <div id="view-convertitore" class="view">
             <div id="view-convertitore-content">
                 <div class="calc-chef">
-                    <p>↔ Nano Banana Convertitore ↔</p>
-                    <p style="font-size: 0.9em; opacity: 0.7;">(Passa da Forno Normale a Friggitrice)</p>
-                    <input type="number" id="forno-gradi-input" placeholder="Gradi Forno (°C)">
-                    <input type="number" id="forno-tempo-input" placeholder="Tempo Forno (min)">
-                    <button class="btn-azione" onclick="convertiForno()">Calcola!</button>
+                    <h2 style="margin-top:0; color: #E64A19;">Convertitore</h2>
+                    <input type="number" id="forno-gradi-input" placeholder="Gradi Forno Normale (°C)">
+                    <input type="number" id="forno-tempo-input" placeholder="Tempo Forno Normale (min)">
+                    <button class="btn-azione" style="background-color: #29B6F6;" onclick="convertiForno()">Calcola!</button>
                     <div id="risultato-conv"></div>
                 </div>
             </div>
@@ -145,6 +225,7 @@
     </div>
 
     <script>
+        // LOGICA JAVASCRIPT
         const sidebar = document.getElementById('sidebar');
         const views = document.querySelectorAll('.view');
         const STORAGE_KEY = 'airchef_recipes';
@@ -154,15 +235,15 @@
         function showView(viewId) {
             views.forEach(view => view.classList.remove('active'));
             document.getElementById('view-' + viewId).classList.add('active');
-            
             if(viewId === 'lista') loadList(false);
             if(viewId === 'preferiti') loadList(true);
-            
             sidebar.classList.remove('open');
         }
 
-        // --- GESTIONE DATI ---
-        function getRecipes() { const data = localStorage.getItem(STORAGE_KEY); return data ? JSON.parse(data) : []; }
+        function getRecipes() { 
+            const data = localStorage.getItem(STORAGE_KEY); 
+            return data ? JSON.parse(data) : []; 
+        }
 
         function savePietanza() {
             const nomeIn = document.getElementById('pietanza-nome-input').value;
@@ -170,17 +251,22 @@
             const gradiIn = document.getElementById('pietanza-gradi-input').value;
             const isFav = document.getElementById('pietanza-fav-input').checked;
 
-            if(!nomeIn || !tempoIn || !gradiIn) { alert('Ehilà Chef, compila tutti i campi!'); return; }
+            if(!nomeIn || !tempoIn || !gradiIn) { 
+                alert('Ehilà Chef, compila tutti i campi!'); 
+                return; 
+            }
 
             const newRecipe = { id: Date.now(), nome: nomeIn, tempo: tempoIn, gradi: gradiIn, fav: isFav };
             const recipes = getRecipes();
             recipes.push(newRecipe);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
 
+            // Svuota i campi dopo il salvataggio
             document.getElementById('pietanza-nome-input').value = '';
             document.getElementById('pietanza-tempo-input').value = '';
             document.getElementById('pietanza-gradi-input').value = '';
             document.getElementById('pietanza-fav-input').checked = false;
+            
             showView('lista');
         }
 
@@ -189,38 +275,48 @@
             const ul = soloPreferiti ? document.getElementById('lista-preferiti') : document.getElementById('lista-pietanze');
             ul.innerHTML = ''; 
             const ricetteDaMostrare = soloPreferiti ? recipes.filter(r => r.fav) : recipes;
-            if(ricetteDaMostrare.length === 0) { ul.innerHTML = '<li class="pietanza-item">Nessuna ricetta qui!</li>'; return; }
+            
+            if(ricetteDaMostrare.length === 0) { 
+                ul.innerHTML = '<li class="pietanza-item" style="justify-content:center; font-weight:bold;">Nessuna ricetta salvata!</li>'; 
+                return; 
+            }
+            
             ricetteDaMostrare.forEach(recipe => {
                 const li = document.createElement('li');
                 li.className = 'pietanza-item';
                 const stella = recipe.fav ? '<span class="stella-icona">⭐</span>' : '';
-                li.innerHTML = `<div><span class="pietanza-nome">${recipe.nome}</span>${stella}</div><span class="dettaglio-pop">${recipe.gradi}°C | ${recipe.tempo} min</span>`;
+                li.innerHTML = `
+                    <div style="display:flex; align-items:center;">
+                        <span class="pietanza-nome">${recipe.nome}</span>${stella}
+                    </div>
+                    <span class="dettaglio-pop">${recipe.gradi}°C | ${recipe.tempo}'</span>
+                `;
                 ul.appendChild(li);
             });
         }
 
-        // --- TEMA REMOVED ---
-        // rimosse le regole del tema pazzo
-
-        // --- LOGICA CONVERTITORE ---
         function convertiForno() {
             const gradiF = document.getElementById('forno-gradi-input').value;
             const tempoF = document.getElementById('forno-tempo-input').value;
             const risDiv = document.getElementById('risultato-conv');
 
-            if(!gradiF || !tempoF) { alert('Ehi, mancano i gradi o il tempo!'); risDiv.style.display='none'; return; }
+            if(!gradiF || !tempoF) { 
+                alert('Inserisci gradi e tempo del forno normale!'); 
+                risDiv.style.display='none'; 
+                return; 
+            }
 
-            // Logica Semplice: Riduci Gradi di 20°C, Riduci Tempo del 25-30%
             let gradiAir = parseInt(gradiF) - 20;
-            if(gradiAir < 100) gradiAir = 100; // Sicurezza minima
+            if(gradiAir < 100) gradiAir = 100;
 
-            let tempoAir = Math.round(parseInt(tempoF) * 0.7); // Moltiplica per 0.70 (riduzione del 30%)
-            if(tempoAir < 2) tempoAir = 2; // Sicurezza minima
+            let tempoAir = Math.round(parseInt(tempoF) * 0.75); 
+            if(tempoAir < 2) tempoAir = 2;
 
-            risDiv.innerHTML = `Prova con:<br>${gradiAir}°C per ${tempoAir} min`;
+            risDiv.innerHTML = `Imposta la friggitrice a:<br><span style="font-size:1.4em; display:block; margin-top:5px;">${gradiAir}°C per ${tempoAir} min</span>`;
             risDiv.style.display = 'block';
         }
 
+        // Caricamento inziale
         loadList(false);
     </script>
 </body>
