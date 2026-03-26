@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirChef - Tempi Friggitrice</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <link rel="icon" type="image/png" href="icona.png?v=2">
+    <link rel="apple-touch-icon" href="icona.png?v=2">
+    <link rel="manifest" href="manifest.json?v=2">
+    
+    <style>
+        :root {
+            --bright-yellow: #FFD54F;
+            --light-blue: #81D4FA;
+            --accent-green: #81C784;
+            --dark-grey: #424242;
+            --card-bg: #FFFFFF;
+            --sidebar-width: 250px;
+        }
+
+        body {
+            font-family: 'Poppins', 'Helvetica Neue', Helvetica, Arial, 'Comic Sans MS', cursive, sans-serif;
+            font-size: 19px;
+            font-weight: 600;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bright-yellow);
+            color: var(--dark-grey);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+            background-image: url('sfondo_mobile.PNG');
+            background-repeat: repeat;
+            background-size: cover;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* SIDEBAR - FONT RIDOTTO A 18px PER NON SBORDARE */
+        #sidebar { width: var(--sidebar-width); background-color: var(--light-blue); padding-top: 20px; transition: transform 0.3s ease; position: absolute; height: 100%; z-index: 100; left: -260px; box-shadow: 2px 0 5px rgba(0,0,0,0.2); }
+        #sidebar.open { left: 0; }
+        .menu-item { display: flex; flex-direction: column; align-items: center; padding: 15px 10px; color: white; text-decoration: none; cursor: pointer; transition: background 0.2s; font-size: 18px; font-weight: 700; text-transform: uppercase; text-align: center; }
+        .menu-item:hover { background-color: rgba(255, 255, 255, 0.2); }
+        .icon-pua { margin-bottom: 8px; font-weight: 800; font-size: 1.5em; }
+
+        #main-content { flex-grow: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; width: 100%; position: relative; z-index: 5; }
+        #header { display: flex; align-items: center; margin-bottom: 25px; background: rgba(255,255,255,0.7); padding: 10px 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(10px); }
+        #menu-toggle { font-size: 2.2em; cursor: pointer; margin-right: 25px; background: none; border: none; color: var(--dark-grey); }
+        #app-title { font-size: 2.5em; margin: 0; color: #E64A19; transition: all 0.3s ease; font-weight: 800; }
+        #app-title span { color: #4CAF50; }
+
+        .view { display: none; }
+        .view.active { display: block; }
+
+        #view-aggiungi-content, #view-convertitore-content { display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 15px; }
+        
+        .form-chef, .calc-chef { max-width: 320px; margin: auto; background: rgba(255, 255, 255, 0.98); padding: 35px; border-radius: 20px; box-shadow: 0 6px 15px rgba(0,0,0,0.15); border: 4px dashed #E64A19; }
+        .form-chef h2, .calc-chef h2 { font-size: 2.1em; color: #E64A19; margin-top: 0; font-weight: 700; }
+        
+        input { width: 85%; padding: 15px; margin: 12px 0; border: 2px solid var(--accent-green); border-radius: 12px; font-family: inherit; font-size: 1.1em; }
+        .preferito-check { margin: 18px 0; font-size: 1.3em; cursor: pointer; display: block; }
+        button.btn-azione { background-color: var(--accent-green); color: white; border: none; padding: 18px 40px; border-radius: 18px; font-size: 1.2em; cursor: pointer; margin-top: 15px; transition: transform 0.1s; font-weight: 700; }
+        button.btn-azione:active { transform: scale(0.95); }
+
+        .lista-ul { list-style: none; padding: 0; }
+        .pietanza-item { background-color: var(--card-bg); margin: 12px 0; padding: 25px; border-radius: 18px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; color: var(--dark-grey); border-left: 5px solid var(--accent-green); }
+        .pietanza-item:hover { background-color: rgba(129, 212, 250, 0.1); }
+        .pietanza-nome { font-size: 1.6em; font-weight: 700; }
+        .dettaglio-pop { font-size: 1.2em; opacity: 0.8; }
+        .stella-icona { color: #FFD54F; font-size: 1.4em; margin-left: 12px; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+
+        #risultato-conv { margin-top: 25px; font-weight: 700; font-size: 1.5em; color: #E64A19; background: #FFE0B2; padding: 20px; border-radius: 15px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <div class="menu-item" onclick="showView('aggiungi')">
+            <span class="icon-pua">⊕</span> Aggiungi
+        </div>
+        <div class="menu-item" onclick="showView('lista')">
+            <span class="icon-pua">📄</span> Lista Totale
+        </div>
+        <div class="menu-item" onclick="showView('preferiti')">
+            <span class="icon-pua">⭐</span> Preferiti
+        </div>
+        <div class="menu-item" onclick="showView('convertitore')">
+            <span class="icon-pua">↔</span> Convertitore
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div id="header">
+            <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h1 id="app-title">AirChef<span>.</span></h1>
+        </div>
+
+        <div id="view-aggiungi" class="view active">
+            <div id="view-aggiungi-content">
+                <div class="form-chef">
+                    <h2>Aggiungi Piatto</h2>
+                    <input type="text" id="pietanza-nome-input" placeholder="Nome (es. Patatine)">
+                    <input type="number" id="pietanza-tempo-input" placeholder="Tempo (min)">
+                    <input type="number" id="pietanza-gradi-input" placeholder="Gradi (°C)">
+                    <label class="preferito-check">
+                        <input type="checkbox" id="pietanza-fav-input"> ⭐ Preferito!
+                    </label>
+                    <button class="btn-azione" onclick="savePietanza()">Salva</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-lista" class="view">
+            <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 15px; text-align: center; margin-bottom: 15px; backdrop-filter: blur(10px);"><h2 class="titolo-lista" style="margin: 0;">Tutte le ricette</h2></div>
+            <ul id="lista-pietanze" class="lista-ul"></ul>
+        </div>
+
+        <div id="view-preferiti" class="view">
+            <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 15px; text-align: center; margin-bottom: 15px; backdrop-filter: blur(10px);"><h2 class="titolo-lista" style="margin: 0;">I tuoi piatti preferiti ⭐</h2></div>
+            <ul id="lista-preferiti" class="lista-ul"></ul>
+        </div>
+
+        <div id="view-convertitore" class="view">
+            <div id="view-convertitore-content">
+                <div class="calc-chef">
+                    <h2>Convertitore</h2>
+                    <p style="font-size: 1em; opacity: 0.7; margin-bottom: 15px;">Da Forno a Friggitrice</p>
+                    <input type="number" id="forno-gradi-input" placeholder="Gradi Forno (°C)">
+                    <input type="number" id="forno-tempo-input" placeholder="Tempo Forno (min)">
+                    <button class="btn-azione" style="background-color: #29B6F6;" onclick="convertiForno()">Calcola!</button>
+                    <div id="risultato-conv"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const views = document.querySelectorAll('.view');
+        const STORAGE_KEY = 'airchef_recipes';
+
+        function toggleSidebar() { sidebar.classList.toggle('open'); }
+
+        function showView(viewId) {
+            views.forEach(view => view.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+            if(viewId === 'lista') loadList(false);
+            if(viewId === 'preferiti') loadList(true);
+            sidebar.classList.remove('open');
+        }
+
+        function getRecipes() { const data = localStorage.getItem(STORAGE_KEY); return data ? JSON.parse(data) : []; }
+
+        function savePietanza() {
+            const nomeIn = document.getElementById('pietanza-nome-input').value;
+            const tempoIn = document.getElementById('pietanza-tempo-input').value;
+            const gradiIn = document.getElementById('pietanza-gradi-input').value;
+            const isFav = document.getElementById('pietanza-fav-input').checked;
+
+            if(!nomeIn || !tempoIn || !gradiIn) { alert('Ehilà Chef, compila tutti i campi!'); return; }
+
+            const newRecipe = { id: Date.now(), nome: nomeIn, tempo: tempoIn, gradi: gradiIn, fav: isFav };
+            const recipes = getRecipes();
+            recipes.push(newRecipe);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
+
+            document.getElementById('pietanza-nome-input').value = '';
+            document.getElementById('pietanza-tempo-input').value = '';
+            document.getElementById('pietanza-gradi-input').value = '';
+            document.getElementById('pietanza-fav-input').checked = false;
+            showView('lista');
+        }
+
+        function loadList(soloPreferiti) {
+            const recipes = getRecipes();
+            const ul = soloPreferiti ? document.getElementById('lista-preferiti') : document.getElementById('lista-pietanze');
+            ul.innerHTML = ''; 
+            const ricetteDaMostrare = soloPreferiti ? recipes.filter(r => r.fav) : recipes;
+            if(ricetteDaMostrare.length === 0) { ul.innerHTML = '<li class="pietanza-item" style="justify-content:center; font-weight:700; font-size:1.4em;">Nessuna ricetta qui!</li>'; return; }
+            ricetteDaMostrare.forEach(recipe => {
+                const li = document.createElement('li');
+                li.className = 'pietanza-item';
+                const stella = recipe.fav ? '<span class="stella-icona">⭐</span>' : '';
+                li.innerHTML = `<div style="display:flex; align-items:center;"><span class="pietanza-nome">${recipe.nome}</span>${stella}</div><span class="dettaglio-pop">${recipe.gradi}°C | ${recipe.tempo} min</span>`;
+                ul.appendChild(li);
+            });
+        }
+
+        function convertiForno() {
+            const gradiF = document.getElementById('forno-gradi-input').value;
+            const tempoF = document.getElementById('forno-tempo-input').value;
+            const risDiv = document.getElementById('risultato-conv');
+
+            if(!gradiF || !tempoF) { alert('Ehi, mancano i gradi o il tempo!'); risDiv.style.display='none'; return; }
+
+            let gradiAir = parseInt(gradiF) - 20;
+            if(gradiAir < 100) gradiAir = 100;
+            let tempoAir = Math.round(parseInt(tempoF) * 0.7); 
+            if(tempoAir < 2) tempoAir = 2;
+
+            risDiv.innerHTML = `Imposta la friggitrice a:<br>${gradiAir}°C per ${tempoAir} min`;
+            risDiv.style.display = 'block';
+        }
+
+        loadList(false);
+    </script>
+</body>
+</html>
