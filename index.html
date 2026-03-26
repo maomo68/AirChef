@@ -11,7 +11,6 @@
     
     <style>
         :root {
-            --bright-yellow: #FFD54F;
             --light-blue: #81D4FA;
             --accent-green: #81C784;
             --dark-grey: #424242;
@@ -23,31 +22,17 @@
             font-family: 'Comic Sans MS', cursive, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--bright-yellow);
             color: var(--dark-grey);
             display: flex;
             height: 100vh;
             overflow: hidden;
-            position: relative;
-        }
-
-        /* SFONDO CON IMMAGINE DELLO CHEF PAZZO (Sfondo trasparente image_11.png) */
-        /* rimosso l'effetto sfuocato/bokeh per una trama nitida */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0.15; /* Sottile */
-            background-image: url('sfondo_mobile.png'); /* <--- CARICA QUESTO FILE */
+            
+            /* SFONDO PURO: Niente giallo, grandezza originale dell'immagine */
+            background-color: #FFFFFF; 
+            background-image: url('sfondo_mobile.png');
             background-repeat: repeat;
-            background-size: 150px auto;
-            pointer-events: none;
-            z-index: 1; /* Sotto tutto */
+            /* Nessun background-size, usa la dimensione reale del file */
         }
-
-        /* --- TEMA REMOVED --- */
-        /* rimosse le regole del tema pazzo */
 
         #sidebar { width: var(--sidebar-width); background-color: var(--light-blue); padding-top: 20px; transition: transform 0.3s ease; position: absolute; height: 100%; z-index: 100; left: -200px; box-shadow: 2px 0 5px rgba(0,0,0,0.2); }
         #sidebar.open { left: 0; }
@@ -56,32 +41,41 @@
         .icon-pua { margin-right: 15px; font-weight: bold; font-size: 1.2em; }
 
         #main-content { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; width: 100%; position: relative; z-index: 5; }
-        #header { display: flex; align-items: center; margin-bottom: 20px; }
+        #header { display: flex; align-items: center; margin-bottom: 20px; background: rgba(255,255,255,0.8); padding: 5px 15px; border-radius: 10px; }
         #menu-toggle { font-size: 2em; cursor: pointer; margin-right: 20px; background: none; border: none; color: var(--dark-grey); }
-        #app-title { font-size: 1.5em; margin: 0; color: #E64A19; transition: all 0.3s ease; }
+        #app-title { font-size: 1.5em; margin: 0; color: #E64A19; }
 
         .view { display: none; }
         .view.active { display: block; }
 
         #view-aggiungi-content, #view-convertitore-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
         
-        /* FINESTRA IN PRIMO PIANO rimpicciolita del 30% */
-        .form-chef, .calc-chef { max-width: 280px; margin: auto; background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 4px dashed #81D4FA; }
+        /* FINESTRA RIMPICCIOLITA (Max 200px, padding ridotto) */
+        .form-chef, .calc-chef { 
+            width: 85%; 
+            max-width: 200px; /* Rimpicciolita del 30% rispetto ai 280px di prima */
+            margin: auto; 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 20px; /* Anche il padding è ridotto per non rubare spazio */
+            border-radius: 15px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+            border: 3px dashed #81D4FA; 
+        }
         
-        input { width: 80%; padding: 12px; margin: 10px 0; border: 2px solid var(--accent-green); border-radius: 10px; font-family: inherit; }
-        .preferito-check { margin: 15px 0; font-size: 1.2em; cursor: pointer; display: block; }
-        button.btn-azione { background-color: var(--accent-green); color: white; border: none; padding: 15px 30px; border-radius: 15px; font-size: 1.2em; cursor: pointer; margin-top: 10px; transition: transform 0.1s; }
+        .form-chef p, .calc-chef p { margin-top: 0; font-size: 0.9em; font-weight: bold; }
+        
+        input { width: 85%; padding: 8px; margin: 8px 0; border: 2px solid var(--accent-green); border-radius: 8px; font-family: inherit; font-size: 0.9em; }
+        .preferito-check { margin: 10px 0; font-size: 1em; cursor: pointer; display: block; }
+        button.btn-azione { background-color: var(--accent-green); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-size: 1em; cursor: pointer; margin-top: 10px; transition: transform 0.1s; }
         button.btn-azione:active { transform: scale(0.95); }
 
         .lista-ul { list-style: none; padding: 0; }
-        .pietanza-item { background-color: var(--card-bg); margin: 10px 0; padding: 20px; border-radius: 15px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; color: var(--dark-grey); }
-        .pietanza-item:hover { background-color: rgba(129, 212, 250, 0.1); }
-        .pietanza-nome { font-size: 1.2em; font-weight: bold; }
-        .dettaglio-pop { font-size: 0.9em; opacity: 0.8; }
-        .stella-icona { color: #FFD54F; font-size: 1.2em; margin-left: 10px; }
+        .pietanza-item { background-color: var(--card-bg); margin: 10px 0; padding: 15px; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; color: var(--dark-grey); }
+        .pietanza-nome { font-size: 1.1em; font-weight: bold; }
+        .dettaglio-pop { font-size: 0.85em; opacity: 0.8; }
+        .stella-icona { color: #FFD54F; font-size: 1.1em; margin-left: 10px; }
 
-        /* --- CONVERTITORE --- */
-        #risultato-conv { margin-top: 20px; font-weight: bold; font-size: 1.2em; color: #E64A19; background: #fff3e0; padding: 15px; border-radius: 10px; display: none; }
+        #risultato-conv { margin-top: 15px; font-weight: bold; font-size: 1.1em; color: #E64A19; background: #fff3e0; padding: 10px; border-radius: 8px; display: none; }
     </style>
 </head>
 <body>
@@ -91,7 +85,7 @@
             <span class="icon-pua">+</span> Aggiungi
         </div>
         <div class="menu-item" onclick="showView('lista')">
-            <span class="icon-pua">≡</span> Lista Totale
+            <span class="icon-pua">≡</span> Lista
         </div>
         <div class="menu-item" onclick="showView('preferiti')">
             <span class="icon-pua">⭐</span> Preferiti
@@ -99,7 +93,7 @@
         <div class="menu-item" onclick="showView('convertitore')">
             <span class="icon-pua">↔</span> Convertitore
         </div>
-        </div>
+    </div>
 
     <div id="main-content">
         <div id="header">
@@ -110,12 +104,12 @@
         <div id="view-aggiungi" class="view active">
             <div id="view-aggiungi-content">
                 <div class="form-chef">
-                    <p>Ciao Chef! Aggiungi un piatto!</p>
-                    <input type="text" id="pietanza-nome-input" placeholder="Nome Pietanza (es. Patatine)">
+                    <p>Aggiungi un piatto!</p>
+                    <input type="text" id="pietanza-nome-input" placeholder="Nome (es. Patatine)">
                     <input type="number" id="pietanza-tempo-input" placeholder="Tempo (min)">
                     <input type="number" id="pietanza-gradi-input" placeholder="Gradi (°C)">
                     <label class="preferito-check">
-                        <input type="checkbox" id="pietanza-fav-input"> ⭐ Segna come Preferito!
+                        <input type="checkbox" id="pietanza-fav-input"> ⭐ Preferito
                     </label>
                     <button class="btn-azione" onclick="savePietanza()">Salva</button>
                 </div>
@@ -123,20 +117,23 @@
         </div>
 
         <div id="view-lista" class="view">
-            <p>Tutte le tue ricette:</p>
+            <div style="background: rgba(255,255,255,0.8); padding: 5px; border-radius: 10px; text-align: center; margin-bottom: 10px;">
+                <h3 style="margin: 0;">Tutte le ricette</h3>
+            </div>
             <ul id="lista-pietanze" class="lista-ul"></ul>
         </div>
 
         <div id="view-preferiti" class="view">
-            <p>I tuoi piatti del cuore ⭐:</p>
+            <div style="background: rgba(255,255,255,0.8); padding: 5px; border-radius: 10px; text-align: center; margin-bottom: 10px;">
+                <h3 style="margin: 0;">I tuoi piatti del cuore ⭐</h3>
+            </div>
             <ul id="lista-preferiti" class="lista-ul"></ul>
         </div>
 
         <div id="view-convertitore" class="view">
             <div id="view-convertitore-content">
                 <div class="calc-chef">
-                    <p>↔ Nano Banana Convertitore ↔</p>
-                    <p style="font-size: 0.9em; opacity: 0.7;">(Passa da Forno Normale a Friggitrice)</p>
+                    <p>Convertitore Forno</p>
                     <input type="number" id="forno-gradi-input" placeholder="Gradi Forno (°C)">
                     <input type="number" id="forno-tempo-input" placeholder="Tempo Forno (min)">
                     <button class="btn-azione" onclick="convertiForno()">Calcola!</button>
@@ -156,14 +153,11 @@
         function showView(viewId) {
             views.forEach(view => view.classList.remove('active'));
             document.getElementById('view-' + viewId).classList.add('active');
-            
             if(viewId === 'lista') loadList(false);
             if(viewId === 'preferiti') loadList(true);
-            
             sidebar.classList.remove('open');
         }
 
-        // --- GESTIONE DATI ---
         function getRecipes() { const data = localStorage.getItem(STORAGE_KEY); return data ? JSON.parse(data) : []; }
 
         function savePietanza() {
@@ -172,7 +166,7 @@
             const gradiIn = document.getElementById('pietanza-gradi-input').value;
             const isFav = document.getElementById('pietanza-fav-input').checked;
 
-            if(!nomeIn || !tempoIn || !gradiIn) { alert('Ehilà Chef, compila tutti i campi!'); return; }
+            if(!nomeIn || !tempoIn || !gradiIn) { alert('Compila tutti i campi!'); return; }
 
             const newRecipe = { id: Date.now(), nome: nomeIn, tempo: tempoIn, gradi: gradiIn, fav: isFav };
             const recipes = getRecipes();
@@ -191,7 +185,7 @@
             const ul = soloPreferiti ? document.getElementById('lista-preferiti') : document.getElementById('lista-pietanze');
             ul.innerHTML = ''; 
             const ricetteDaMostrare = soloPreferiti ? recipes.filter(r => r.fav) : recipes;
-            if(ricetteDaMostrare.length === 0) { ul.innerHTML = '<li class="pietanza-item">Nessuna ricetta qui!</li>'; return; }
+            if(ricetteDaMostrare.length === 0) { ul.innerHTML = '<li class="pietanza-item" style="justify-content:center;">Nessuna ricetta qui!</li>'; return; }
             ricetteDaMostrare.forEach(recipe => {
                 const li = document.createElement('li');
                 li.className = 'pietanza-item';
@@ -201,25 +195,19 @@
             });
         }
 
-        // --- TEMA REMOVED ---
-        // rimosse le regole del tema pazzo
-
-        // --- LOGICA CONVERTITORE ---
         function convertiForno() {
             const gradiF = document.getElementById('forno-gradi-input').value;
             const tempoF = document.getElementById('forno-tempo-input').value;
             const risDiv = document.getElementById('risultato-conv');
 
-            if(!gradiF || !tempoF) { alert('Ehi, mancano i gradi o il tempo!'); risDiv.style.display='none'; return; }
+            if(!gradiF || !tempoF) { alert('Mancano i gradi o il tempo!'); risDiv.style.display='none'; return; }
 
-            // Logica Semplice: Riduci Gradi di 20°C, Riduci Tempo del 25-30%
             let gradiAir = parseInt(gradiF) - 20;
-            if(gradiAir < 100) gradiAir = 100; // Sicurezza minima
+            if(gradiAir < 100) gradiAir = 100;
+            let tempoAir = Math.round(parseInt(tempoF) * 0.7); 
+            if(tempoAir < 2) tempoAir = 2;
 
-            let tempoAir = Math.round(parseInt(tempoF) * 0.7); // Moltiplica per 0.70 (riduzione del 30%)
-            if(tempoAir < 2) tempoAir = 2; // Sicurezza minima
-
-            risDiv.innerHTML = `Prova con:<br>${gradiAir}°C per ${tempoAir} min`;
+            risDiv.innerHTML = `${gradiAir}°C per ${tempoAir} min`;
             risDiv.style.display = 'block';
         }
 
