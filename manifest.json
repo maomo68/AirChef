@@ -1,0 +1,21 @@
+{
+  "name": "AirChef - Tempi Friggitrice",
+  "short_name": "AirChef",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#FFD54F",
+  "theme_color": "#4CAF50",
+  "icons": [
+    {
+      "src": "icona.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icona.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+    /* Puoi aggiungere altre dimensioni qui se necessario */
+  ]
+}
