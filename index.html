@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AirChef - Tempi Friggitrice</title>
+    <title>AIR&FRYER - Tempi Friggitrice</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/png" href="icona.png?v=2">
     <link rel="apple-touch-icon" href="icona.png?v=2">
-    <link rel="manifest" href="manifest.json?v=2">
+    <link rel="manifest" href="manifest.json?v=3">
     
     <style>
         :root {
@@ -48,7 +48,6 @@
             z-index: 1;
         }
 
-        /* --- SIDEBAR WOW --- */
         #sidebar { 
             width: var(--sidebar-width); 
             background: linear-gradient(160deg, #81D4FA 0%, #29B6F6 100%); 
@@ -60,7 +59,6 @@
         }
         #sidebar.open { left: 0; }
 
-        /* IDENTITÀ IN ALTO */
         .sidebar-header {
             padding: 30px 10px 15px 10px;
             text-align: center;
@@ -75,18 +73,17 @@
             border: 4px solid white;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             background-color: white;
-            object-fit: cover; /* Ritaglia l'immagine perfettamente a cerchio */
+            object-fit: cover; 
         }
         .sidebar-header h3 {
             margin: 10px 0 0 0;
             color: white;
-            font-size: 1.6em;
+            font-size: 1.4em;
             font-weight: 800;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
             letter-spacing: 1px;
         }
         
-        /* OPZIONI MENU */
         .menu-item { 
             display: flex; flex-direction: column; align-items: center; 
             padding: 15px 10px; color: white; text-decoration: none; 
@@ -98,13 +95,12 @@
             background-color: rgba(255, 255, 255, 0.2); 
             transform: scale(1.02);
         }
-        .icon-pua { margin-bottom: 8px; font-weight: 800; font-size: 1.5em; text-shadow: none; }
+        .icon-pua { margin-bottom: 8px; font-weight: normal; font-size: 1.5em; text-shadow: none; }
 
         #main-content { flex-grow: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; width: 100%; position: relative; z-index: 5; }
         #header { display: flex; align-items: center; margin-bottom: 25px; background: rgba(255,255,255,0.7); padding: 10px 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(10px); }
         #menu-toggle { font-size: 2.2em; cursor: pointer; margin-right: 25px; background: none; border: none; color: var(--dark-grey); }
-        #app-title { font-size: 2.5em; margin: 0; color: #E64A19; transition: all 0.3s ease; font-weight: 800; }
-        #app-title span { color: #4CAF50; }
+        #app-title { font-size: 2.2em; margin: 0; color: #E64A19; transition: all 0.3s ease; font-weight: 800; }
 
         .view { display: none; }
         .view.active { display: block; }
@@ -141,28 +137,28 @@
     <div id="sidebar">
         <div class="sidebar-header">
             <img src="avatar_chef.png" alt="Chef e Friggitrice">
-            <h3>AirChef</h3>
+            <h3>AIR&FRYER</h3> 
         </div>
 
         <div class="menu-item" onclick="resetAggiungi(); showView('aggiungi')">
-            <span class="icon-pua">⊕</span> Aggiungi
+            <span class="icon-pua">➕</span> <span data-i18n="menu-add">Aggiungi</span>
         </div>
         <div class="menu-item" onclick="showView('lista')">
-            <span class="icon-pua">📄</span> Lista Totale
+            <span class="icon-pua">📄</span> <span data-i18n="menu-list">Lista Totale</span>
         </div>
         <div class="menu-item" onclick="showView('preferiti')">
-            <span class="icon-pua">⭐</span> Preferiti
+            <span class="icon-pua">⭐</span> <span data-i18n="menu-fav">Preferiti</span>
         </div>
         <div class="menu-item" onclick="showView('convertitore')">
-            <span class="icon-pua">↔</span> Convertitore
+            <span class="icon-pua">🔄</span> <span data-i18n="menu-conv">Convertitore</span>
         </div>
 
         <div style="border-top: 2px dashed rgba(255,255,255,0.5); margin-top: 10px; padding-top: 10px;">
             <div class="menu-item" onclick="esportaDati()">
-                <span class="icon-pua">💾</span> Backup
+                <span class="icon-pua">💾</span> <span data-i18n="menu-backup">Backup</span>
             </div>
             <div class="menu-item" onclick="document.getElementById('file-import').click()">
-                <span class="icon-pua">📥</span> Importa
+                <span class="icon-pua">📥</span> <span data-i18n="menu-import">Importa</span>
             </div>
             <input type="file" id="file-import" accept=".json" style="display:none" onchange="importaDati(event)">
         </div>
@@ -171,56 +167,55 @@
     <div id="main-content" onclick="chiudiSidebar()">
         <div id="header">
             <button id="menu-toggle" onclick="toggleSidebar(event)">☰</button>
-            <h1 id="app-title">AirChef<span>.</span></h1>
-        </div>
+            <h1 id="app-title">AIR&FRYER</h1> </div>
 
         <div id="view-aggiungi" class="view active">
             <div id="view-aggiungi-content">
                 <div class="form-chef" onclick="event.stopPropagation()">
-                    <h2 id="titolo-aggiungi">Aggiungi Piatto</h2>
+                    <h2 id="titolo-aggiungi" data-i18n="title-add">Aggiungi Piatto</h2>
                     
                     <select id="pietanza-categoria-input">
-                        <option value="🍟">🍟 Patate / Snack</option>
-                        <option value="🥩">🥩 Carne</option>
-                        <option value="🍗">🍗 Pollo</option>
-                        <option value="🐟">🐟 Pesce</option>
-                        <option value="🥦">🥦 Verdure</option>
-                        <option value="🍞">🍞 Pane / Lievitati</option>
-                        <option value="🧁">🧁 Dolci</option>
-                        <option value="🍽️">🍽️ Altro</option>
+                        <option value="🍟" data-i18n="cat-potato">🍟 Patate / Snack</option>
+                        <option value="🥩" data-i18n="cat-meat">🥩 Carne</option>
+                        <option value="🍗" data-i18n="cat-chicken">🍗 Pollo</option>
+                        <option value="🐟" data-i18n="cat-fish">🐟 Pesce</option>
+                        <option value="🥦" data-i18n="cat-veg">🥦 Verdure</option>
+                        <option value="🍞" data-i18n="cat-bread">🍞 Pane / Lievitati</option>
+                        <option value="🧁" data-i18n="cat-sweet">🧁 Dolci</option>
+                        <option value="🍽️" data-i18n="cat-other">🍽️ Altro</option>
                     </select>
 
-                    <input type="text" id="pietanza-nome-input" placeholder="Nome (es. Patatine)">
-                    <input type="number" id="pietanza-tempo-input" placeholder="Tempo (min)">
-                    <input type="number" id="pietanza-gradi-input" placeholder="Gradi (°C)">
-                    <input type="text" id="pietanza-note-input" placeholder="Note (es. Gira a metà)">
+                    <input type="text" id="pietanza-nome-input" data-i18n-placeholder="placeholder-name" placeholder="Nome (es. Patatine)">
+                    <input type="number" id="pietanza-tempo-input" data-i18n-placeholder="placeholder-time" placeholder="Tempo (min)">
+                    <input type="number" id="pietanza-gradi-input" data-i18n-placeholder="placeholder-temp" placeholder="Gradi (°C)">
+                    <input type="text" id="pietanza-note-input" data-i18n-placeholder="placeholder-notes" placeholder="Note (es. Gira a metà)">
 
                     <label class="preferito-check">
-                        <input type="checkbox" id="pietanza-fav-input" style="width: auto;"> ⭐ Preferito!
+                        <input type="checkbox" id="pietanza-fav-input" style="width: auto;"> <span data-i18n="btn-fav">⭐ Preferito!</span>
                     </label>
-                    <button id="btn-salva-principale" class="btn-azione" onclick="savePietanza()">Salva</button>
+                    <button id="btn-salva-principale" class="btn-azione" onclick="savePietanza()" data-i18n="btn-save">Salva</button>
                 </div>
             </div>
         </div>
 
         <div id="view-lista" class="view">
-            <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 15px; text-align: center; margin-bottom: 15px; backdrop-filter: blur(10px);"><h2 class="titolo-lista" style="margin: 0;">Tutte le ricette</h2></div>
+            <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 15px; text-align: center; margin-bottom: 15px; backdrop-filter: blur(10px);"><h2 class="titolo-lista" style="margin: 0;" data-i18n="title-list">Tutte le ricette</h2></div>
             <ul id="lista-pietanze" class="lista-ul"></ul>
         </div>
 
         <div id="view-preferiti" class="view">
-            <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 15px; text-align: center; margin-bottom: 15px; backdrop-filter: blur(10px);"><h2 class="titolo-lista" style="margin: 0;">I tuoi piatti preferiti ⭐</h2></div>
+            <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 15px; text-align: center; margin-bottom: 15px; backdrop-filter: blur(10px);"><h2 class="titolo-lista" style="margin: 0;" data-i18n="title-fav">I tuoi piatti preferiti ⭐</h2></div>
             <ul id="lista-preferiti" class="lista-ul"></ul>
         </div>
 
         <div id="view-convertitore" class="view">
             <div id="view-convertitore-content">
                 <div class="calc-chef" onclick="event.stopPropagation()">
-                    <h2>Convertitore</h2>
-                    <p style="font-size: 1em; opacity: 0.7; margin-bottom: 15px;">Da Forno a Friggitrice</p>
-                    <input type="number" id="forno-gradi-input" placeholder="Gradi Forno (°C)">
-                    <input type="number" id="forno-tempo-input" placeholder="Tempo Forno (min)">
-                    <button class="btn-azione" style="background-color: #29B6F6;" onclick="convertiForno()">Calcola!</button>
+                    <h2 data-i18n="title-conv">Convertitore</h2>
+                    <p style="font-size: 1em; opacity: 0.7; margin-bottom: 15px;" data-i18n="subtitle-conv">Da Forno a Friggitrice</p>
+                    <input type="number" id="forno-gradi-input" data-i18n-placeholder="placeholder-oven-temp" placeholder="Gradi Forno (°C)">
+                    <input type="number" id="forno-tempo-input" data-i18n-placeholder="placeholder-oven-time" placeholder="Tempo Forno (min)">
+                    <button class="btn-azione" style="background-color: #29B6F6;" onclick="convertiForno()" data-i18n="btn-calc">Calcola!</button>
                     <div id="risultato-conv"></div>
                 </div>
             </div>
@@ -228,22 +223,53 @@
     </div>
 
     <script>
+        // --- SISTEMA DI LINGUA SEMPLIFICATO: IT o EN ---
+        const dizionario = {
+            'it': {
+                'menu-add': 'Aggiungi', 'menu-list': 'Lista Totale', 'menu-fav': 'Preferiti', 'menu-conv': 'Convertitore', 'menu-backup': 'Backup', 'menu-import': 'Importa',
+                'title-add': 'Aggiungi Piatto', 'title-edit': 'Modifica Piatto', 'title-list': 'Tutte le ricette', 'title-fav': 'I tuoi piatti preferiti ⭐', 'title-conv': 'Convertitore',
+                'placeholder-name': 'Nome (es. Patatine)', 'placeholder-time': 'Tempo (min)', 'placeholder-temp': 'Gradi (°C)', 'placeholder-notes': 'Note (es. Gira a metà)',
+                'placeholder-oven-temp': 'Gradi Forno (°C)', 'placeholder-oven-time': 'Tempo Forno (min)',
+                'btn-fav': '⭐ Preferito!', 'btn-save': 'Salva', 'btn-update': 'Aggiorna 👍', 'btn-calc': 'Calcola!', 'subtitle-conv': 'Da Forno a Friggitrice',
+                'alert-fill': 'Ehilà Chef, compila nome, tempo e gradi!', 'alert-delete': 'Vuoi eliminare questo piatto dalla tua lista?',
+                'empty-list': 'Nessuna ricetta qui!', 'alert-calc': 'Ehi, mancano i gradi o il tempo!', 'calc-result': 'Imposta la friggitrice a:<br>',
+                'alert-no-backup': 'Non hai ancora ricette da salvare!', 'alert-import-warn': '⚠️ ATTENZIONE: Questo sovrascriverà i tuoi piatti con il backup. Procedere?',
+                'alert-import-ok': '✅ Fantastico! Le tue ricette sono state ripristinate.', 'alert-import-err1': '❌ Formato non valido.', 'alert-import-err2': '❌ Errore lettura file.',
+                'cat-potato': '🍟 Patate / Snack', 'cat-meat': '🥩 Carne', 'cat-chicken': '🍗 Pollo', 'cat-fish': '🐟 Pesce', 'cat-veg': '🥦 Verdure', 'cat-bread': '🍞 Pane / Lievitati', 'cat-sweet': '🧁 Dolci', 'cat-other': '🍽️ Altro'
+            },
+            'en': {
+                'menu-add': 'Add Dish', 'menu-list': 'All Recipes', 'menu-fav': 'Favorites', 'menu-conv': 'Converter', 'menu-backup': 'Backup', 'menu-import': 'Import',
+                'title-add': 'Add Dish', 'title-edit': 'Edit Dish', 'title-list': 'All recipes', 'title-fav': 'Your favorite dishes ⭐', 'title-conv': 'Converter',
+                'placeholder-name': 'Name (e.g. Fries)', 'placeholder-time': 'Time (min)', 'placeholder-temp': 'Temp (°C)', 'placeholder-notes': 'Notes (e.g. Shake halfway)',
+                'placeholder-oven-temp': 'Oven Temp (°C)', 'placeholder-oven-time': 'Oven Time (min)',
+                'btn-fav': '⭐ Favorite!', 'btn-save': 'Save', 'btn-update': 'Update 👍', 'btn-calc': 'Calculate!', 'subtitle-conv': 'From Oven to Air Fryer',
+                'alert-fill': 'Hey Chef, fill in name, time and temp!', 'alert-delete': 'Do you want to delete this dish from your list?',
+                'empty-list': 'No recipes here!', 'alert-calc': 'Hey, temp or time is missing!', 'calc-result': 'Set air fryer to:<br>',
+                'alert-no-backup': 'No recipes to backup yet!', 'alert-import-warn': '⚠️ WARNING: This will overwrite your current dishes. Proceed?',
+                'alert-import-ok': '✅ Great! Your recipes have been restored.', 'alert-import-err1': '❌ Invalid format.', 'alert-import-err2': '❌ File read error.',
+                'cat-potato': '🍟 Potatoes / Snacks', 'cat-meat': '🥩 Meat', 'cat-chicken': '🍗 Chicken', 'cat-fish': '🐟 Fish', 'cat-veg': '🥦 Veggies', 'cat-bread': '🍞 Bread / Dough', 'cat-sweet': '🧁 Desserts', 'cat-other': '🍽️ Other'
+            }
+        };
+
+        const browserLang = (navigator.language || navigator.userLanguage).substring(0, 2);
+        const lang = browserLang === 'it' ? 'it' : 'en';
+
+        function t(key) { return dizionario[lang][key] || key; }
+
+        function applicaLingua() {
+            document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-placeholder')); });
+        }
+        applicaLingua(); 
+
+        // --- LOGICA APP ---
         const sidebar = document.getElementById('sidebar');
         const views = document.querySelectorAll('.view');
-        const STORAGE_KEY = 'airchef_recipes';
-        
+        const STORAGE_KEY = 'airchef_recipes'; 
         let piattoInModifica = null;
 
-        function toggleSidebar(event) { 
-            if(event) event.stopPropagation();
-            sidebar.classList.toggle('open'); 
-        }
-
-        function chiudiSidebar() {
-            if(sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open');
-            }
-        }
+        function toggleSidebar(event) { if(event) event.stopPropagation(); sidebar.classList.toggle('open'); }
+        function chiudiSidebar() { if(sidebar.classList.contains('open')) { sidebar.classList.remove('open'); } }
 
         function showView(viewId) {
             views.forEach(view => view.classList.remove('active'));
@@ -263,19 +289,16 @@
             const noteIn = document.getElementById('pietanza-note-input').value;
             const isFav = document.getElementById('pietanza-fav-input').checked;
 
-            if(!nomeIn || !tempoIn || !gradiIn) { alert('Ehilà Chef, compila nome, tempo e gradi!'); return; }
+            if(!nomeIn || !tempoIn || !gradiIn) { alert(t('alert-fill')); return; }
 
             let recipes = getRecipes();
 
             if(piattoInModifica !== null) {
                 const index = recipes.findIndex(r => r.id === piattoInModifica);
                 if(index !== -1) {
-                    recipes[index].categoria = categoriaIn;
-                    recipes[index].nome = nomeIn;
-                    recipes[index].tempo = tempoIn;
-                    recipes[index].gradi = gradiIn;
-                    recipes[index].note = noteIn;
-                    recipes[index].fav = isFav;
+                    recipes[index].categoria = categoriaIn; recipes[index].nome = nomeIn;
+                    recipes[index].tempo = tempoIn; recipes[index].gradi = gradiIn;
+                    recipes[index].note = noteIn; recipes[index].fav = isFav;
                 }
             } else {
                 const newRecipe = { id: Date.now(), categoria: categoriaIn, nome: nomeIn, tempo: tempoIn, gradi: gradiIn, note: noteIn, fav: isFav };
@@ -283,8 +306,7 @@
             }
 
             localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
-            resetAggiungi();
-            showView('lista');
+            resetAggiungi(); showView('lista');
         }
 
         function modificaPiatto(id, event) {
@@ -300,15 +322,15 @@
                 document.getElementById('pietanza-fav-input').checked = recipe.fav;
                 
                 piattoInModifica = id;
-                document.getElementById('titolo-aggiungi').innerText = "Modifica Piatto";
-                document.getElementById('btn-salva-principale').innerText = "Aggiorna 👍";
+                document.getElementById('titolo-aggiungi').innerText = t('title-edit');
+                document.getElementById('btn-salva-principale').innerText = t('btn-update');
                 showView('aggiungi');
             }
         }
 
         function eliminaPiatto(id, event) {
             event.stopPropagation();
-            if(confirm("Vuoi eliminare questo piatto dalla tua lista?")) {
+            if(confirm(t('alert-delete'))) {
                 let recipes = getRecipes();
                 recipes = recipes.filter(r => r.id !== id);
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
@@ -327,8 +349,8 @@
             document.getElementById('pietanza-note-input').value = '';
             document.getElementById('pietanza-fav-input').checked = false;
             piattoInModifica = null;
-            document.getElementById('titolo-aggiungi').innerText = "Aggiungi Piatto";
-            document.getElementById('btn-salva-principale').innerText = "Salva";
+            document.getElementById('titolo-aggiungi').innerText = t('title-add');
+            document.getElementById('btn-salva-principale').innerText = t('btn-save');
         }
 
         function loadList(soloPreferiti) {
@@ -338,7 +360,7 @@
             const ricetteDaMostrare = soloPreferiti ? recipes.filter(r => r.fav) : recipes;
             
             if(ricetteDaMostrare.length === 0) { 
-                ul.innerHTML = '<li class="pietanza-item" style="justify-content:center; font-weight:700; font-size:1.4em;">Nessuna ricetta qui!</li>'; 
+                ul.innerHTML = `<li class="pietanza-item" style="justify-content:center; font-weight:700; font-size:1.4em;">${t('empty-list')}</li>`; 
                 return; 
             }
             
@@ -359,8 +381,8 @@
                         ${bloccoNote}
                     </div>
                     <div class="azioni-pietanza">
-                        <button class="btn-icona" onclick="modificaPiatto(${recipe.id}, event)" title="Modifica">✏️</button>
-                        <button class="btn-icona" onclick="eliminaPiatto(${recipe.id}, event)" title="Elimina">🗑️</button>
+                        <button class="btn-icona" onclick="modificaPiatto(${recipe.id}, event)">✏️</button>
+                        <button class="btn-icona" onclick="eliminaPiatto(${recipe.id}, event)">🗑️</button>
                     </div>
                 `;
                 ul.appendChild(li);
@@ -372,26 +394,23 @@
             const tempoF = document.getElementById('forno-tempo-input').value;
             const risDiv = document.getElementById('risultato-conv');
 
-            if(!gradiF || !tempoF) { alert('Ehi, mancano i gradi o il tempo!'); risDiv.style.display='none'; return; }
+            if(!gradiF || !tempoF) { alert(t('alert-calc')); risDiv.style.display='none'; return; }
 
             let gradiAir = parseInt(gradiF) - 20;
             if(gradiAir < 100) gradiAir = 100;
             let tempoAir = Math.round(parseInt(tempoF) * 0.7); 
             if(tempoAir < 2) tempoAir = 2;
 
-            risDiv.innerHTML = `Imposta la friggitrice a:<br>${gradiAir}°C per ${tempoAir} min`;
+            risDiv.innerHTML = `${t('calc-result')} <span style="font-size:1.4em; display:block; margin-top:5px;">${gradiAir}°C per ${tempoAir} min</span>`;
             risDiv.style.display = 'block';
         }
 
         function esportaDati() {
             const data = localStorage.getItem(STORAGE_KEY);
-            if (!data || data === "[]") {
-                alert("Non hai ancora ricette da salvare!");
-                return;
-            }
+            if (!data || data === "[]") { alert(t('alert-no-backup')); return; }
             const oggi = new Date();
             const dataStringa = oggi.toISOString().split('T')[0];
-            const nomeFile = `AirChef_Backup_${dataStringa}.json`;
+            const nomeFile = `AIR&FRYER_Backup_${dataStringa}.json`;
             const blob = new Blob([data], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -412,19 +431,15 @@
                 try {
                     const importedData = JSON.parse(e.target.result);
                     if (Array.isArray(importedData)) {
-                        if (confirm("⚠️ ATTENZIONE: Questa operazione sovrascriverà i tuoi piatti attuali con quelli del backup. Vuoi procedere?")) {
+                        if (confirm(t('alert-import-warn'))) {
                             localStorage.setItem(STORAGE_KEY, JSON.stringify(importedData));
                             loadList(false);
                             chiudiSidebar();
-                            alert("✅ Fantastico! Le tue ricette sono state ripristinate.");
+                            alert(t('alert-import-ok'));
                             showView('lista');
                         }
-                    } else {
-                        alert("❌ Formato del file non valido.");
-                    }
-                } catch (error) {
-                    alert("❌ Errore nella lettura del file.");
-                }
+                    } else { alert(t('alert-import-err1')); }
+                } catch (error) { alert(t('alert-import-err2')); }
                 event.target.value = '';
             };
             reader.readAsText(file);
