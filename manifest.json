@@ -1,10 +1,10 @@
 {
-  "name": "AirChef - Tempi Friggitrice",
-  "short_name": "AirChef",
+  "name": "AIR&FRYER - Tempi Friggitrice",
+  "short_name": "AIR&FRYER",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#FFD54F",
-  "theme_color": "#4CAF50",
+  "theme_color": "#81C784",
   "icons": [
     {
       "src": "icona.png",
@@ -16,6 +16,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-    /* Puoi aggiungere altre dimensioni qui se necessario */
   ]
 }
